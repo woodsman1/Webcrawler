@@ -5,7 +5,11 @@ import requests
 class WebCrawler:
 
   def __init__(self) -> None:
-      pass
+    #   self.website_list = seeds
+    #   self.url_queue = Queue
+    #   self.current_depth_unvisited_url_queue = Queue
+    pass
+
 
   def get_urls() -> list:
       urls = []
