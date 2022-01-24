@@ -57,8 +57,3 @@ class UrlQueue:
     self._urls_till_now.clear()
     self._visited_urls.clear()
     self.clear_unvisited_urls()
-
-
-
-
-
