@@ -7,7 +7,7 @@ class UrlQueue:
     self._unvisited_urls = Queue()
 
   def add_unvisited_url(self, url):
-    if url or url in self._urls_till_now:
+    if not url or url in self._urls_till_now:
       return
     self._unvisited_urls.put_nowait(url)
   
@@ -19,7 +19,7 @@ class UrlQueue:
         self.add_unvisited_url(urls)
   
   def add_visited_url(self, url, url_result):
-    if url and url in self._visited_urls:
+    if not url and url in self._visited_urls:
       return
     self._visited_urls[url] = url_result
   
@@ -51,7 +51,7 @@ class UrlQueue:
     return url in self._visited_urls
   
   def is_unvisited_urls_empty(self):
-    return self._unvisited_urls.empty()
+    return self._unvisited_urls.qsize() == 0
 
   def clear(self):
     self._urls_till_now.clear()
