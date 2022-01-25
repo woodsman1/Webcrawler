@@ -7,7 +7,6 @@ class UrlQueue:
     self._unvisited_urls = Queue()
 
   def add_unvisited_url(self, url):
-    print(type(self._urls_till_now), url)
     if not url or (url in self._urls_till_now):
       return
     self._unvisited_urls.put_nowait(url)

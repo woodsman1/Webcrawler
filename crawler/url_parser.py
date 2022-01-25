@@ -49,17 +49,22 @@ def make_url_valid(url, referer_url):
 
 def parse_url(url, referer_url):
   url = url.strip()
-  if url:
+  # print("parse_url done", url)
+  if not url:
     return None 
   
-  if url.startwith('\\"'):
+  if url.startswith('\\"'):
     url = url.encode('utf-8').decode('unicode_escape').replace(r'\/', r'/').replace(r'"', r'')
     return url
 
+
   parsed_url = make_url_valid(url, referer_url)
+  return parsed_url
 
 def parse_urls(urls, referer_url):
   parsed_urls = set()
+
+  # print('in parse_urls', urls)
 
   for url in urls:
     parsed_url = parse_url(url, referer_url)

@@ -30,7 +30,7 @@ class WebCrawler:
         response_str = ''
 
         try:
-            print(url, "get hyperlink")
+            # print(url, "get hyperlink")
             start_time = time.time()
             resp = requests.get(url)
             response_time = time.time() - start_time
@@ -38,14 +38,20 @@ class WebCrawler:
             sp = BeautifulSoup(resp.text, 'lxml')
             data = sp.find_all("a", href=True)
 
+            raw_urls = set()
+
+            for x in data:
+                raw_url = x['href']
+                raw_urls.add(raw_url)
+
             status_code = str(resp.status_code)
 
             # parse data (get filter data)
-            print("here")
-            parsed_urls = parse_urls(data, url)
+            parsed_urls = parse_urls(raw_urls, url)
             # add the parsed data
-            print("parsed_urls",parsed_urls)
             self.url_queue.add_unvisited_urls(parsed_urls)
+
+            response_str = "Success"
 
             if resp.status_code > 400:
                 response_str = f'{status_code} HTTP Status Code'
@@ -56,19 +62,19 @@ class WebCrawler:
             response_str = str(ex)
             retry_time = 0
         except requests.exceptions.InvalidSchema as ex:
-            exception_str = str(ex)
+            response_str = str(ex)
             status_code = 'InvalidSchema'
             retry_times = 0
         except requests.exceptions.ChunkedEncodingError as ex:
-            exception_str = str(ex)
+            response_str = str(ex)
             status_code = 'ChunkedEncodingError'
             retry_times = 0
         except requests.exceptions.InvalidURL as ex:
-            exception_str = str(ex)
+            response_str = str(ex)
             status_code = 'InvalidURL'
             retry_times = 0
         except Exception as ex:
-            exception_str = str(ex)
+            response_str = str(ex)
             status_code = 'Unknown Exception'
             retry_times = 0
         
@@ -77,12 +83,12 @@ class WebCrawler:
                 time.sleep((2-retry_times)*2)
                 return self.get_hyperlinks(url, retry_time-1)
         else:
-            self.bad_url_mapping[url] = exception_str
+            self.bad_url_mapping[url] = response_str
 
         result = {
             'status_code' : status_code,
             'response_time' : response_time,
-            'exception' :exception_str,
+            'exception' :response_str,
         }
 
         self.url_queue.add_visited_url(url, result)
@@ -93,7 +99,7 @@ class WebCrawler:
         while 1:
             try:
                 url = self.current_depth_unvisited_url_queue.get()
-                print(url, "crawl")
+                # print(url, "crawl")
                 self.get_hyperlinks(url)
             finally:
                 self.current_depth_unvisited_url_queue.task_done()
@@ -120,8 +126,9 @@ class WebCrawler:
         while self.current_depth <= depth: 
             while not self.url_queue.is_unvisited_urls_empty():
                 url = self.url_queue.get_unvisited_url()
-                print(url, "bfs")
+                # print(url, "bfs")
                 self.current_depth_unvisited_url_queue.put_nowait(url)
+            time.sleep(0.5)
                 
             self.current_depth_unvisited_url_queue.join()
             self.current_depth += 1
@@ -141,7 +148,7 @@ class WebCrawler:
 
         threads = self.create_threads(concurrency)
 
-        time.sleep(0.5)
+        # time.sleep(1)/
         if(crawl_mode.lower() == 'bfs'):
             self.bfs(max_depth)
 
@@ -160,4 +167,4 @@ class WebCrawler:
 if __name__ == "__main__":
     seed = "https://codeforces.com/"
     wc = WebCrawler(seed)
-    wc.start('bfs', 0, 1)
+    wc.start('bfs', 1)
