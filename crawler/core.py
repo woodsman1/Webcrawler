@@ -1,9 +1,10 @@
 import multiprocessing
 import queue
 import threading
-from time import sleep
+import time
 from bs4 import BeautifulSoup
 import requests
+from url_parser import parse_seed, parse_urls
 
 from url_queue import UrlQueue
 
@@ -13,41 +14,87 @@ data = [[1, 2, 3], [4, 5 ,6], [7, 8, 9], [10, 11, 12]]
 
 class WebCrawler:
 
-    def __init__(self) -> None:
+    def __init__(self, _seeds) -> None:
         self.url_queue = UrlQueue()
         self.current_depth_unvisited_url_queue = queue.Queue()
         self.current_depth = 0
+        self.seeds = parse_seed(_seeds)
+        self.url_queue.add_unvisited_urls(self.seeds)
+        self.bad_url_mapping = dict()
 
-    def get_hyperlinks(urls) -> None:
-        for url in urls:
-            print(url)
-            r = requests.get(url)
-            sp = BeautifulSoup(r.text, 'lxml')
+
+
+    def get_hyperlinks(self, url, retry_time = 1) -> None:
+        status_code = 0
+        response_time = 0
+        response_str = ''
+
+        try:
+            print(url, "get hyperlink")
+            start_time = time.time()
+            resp = requests.get(url)
+            response_time = time.time() - start_time
+
+            sp = BeautifulSoup(resp.text, 'lxml')
             data = sp.find_all("a", href=True)
 
-            for x in data:
-                link = x['href']
-                if not link.startswith("https://"):
-                    link = url + link[1:]
-                print(link)
+            status_code = str(resp.status_code)
 
+            # parse data (get filter data)
+            print("here")
+            parsed_urls = parse_urls(data, url)
+            # add the parsed data
+            print("parsed_urls",parsed_urls)
+            self.url_queue.add_unvisited_urls(parsed_urls)
 
+            if resp.status_code > 400:
+                response_str = f'{status_code} HTTP Status Code'
 
+            # parse data
+        except requests.exceptions.SSLError as ex:
+            status_code = 'SSLError'
+            response_str = str(ex)
+            retry_time = 0
+        except requests.exceptions.InvalidSchema as ex:
+            exception_str = str(ex)
+            status_code = 'InvalidSchema'
+            retry_times = 0
+        except requests.exceptions.ChunkedEncodingError as ex:
+            exception_str = str(ex)
+            status_code = 'ChunkedEncodingError'
+            retry_times = 0
+        except requests.exceptions.InvalidURL as ex:
+            exception_str = str(ex)
+            status_code = 'InvalidURL'
+            retry_times = 0
+        except Exception as ex:
+            exception_str = str(ex)
+            status_code = 'Unknown Exception'
+            retry_times = 0
+        
+        if retry_time > 0:
+            if not status_code.isdigit() or int(status_code) > 400:
+                time.sleep((2-retry_times)*2)
+                return self.get_hyperlinks(url, retry_time-1)
+        else:
+            self.bad_url_mapping[url] = exception_str
 
-    def just_trial(self, url):
-        print("trial", url)
+        result = {
+            'status_code' : status_code,
+            'response_time' : response_time,
+            'exception' :exception_str,
+        }
 
-        for x in data[url]:
-            self.url_queue.add_unvisited_url(x)
-            print(x, "add")
+        self.url_queue.add_visited_url(url, result)
+        return
 
 
     def crawl(self):
         while 1:
             try:
                 url = self.current_depth_unvisited_url_queue.get()
-                # print(url)
-                self.just_trial(url)
+                print(url, "crawl")
+                self.get_hyperlinks(url)
             finally:
                 self.current_depth_unvisited_url_queue.task_done()
 
@@ -72,16 +119,11 @@ class WebCrawler:
 
         while self.current_depth <= depth: 
             while not self.url_queue.is_unvisited_urls_empty():
-                print("here")
                 url = self.url_queue.get_unvisited_url()
-                print(url)
+                print(url, "bfs")
                 self.current_depth_unvisited_url_queue.put_nowait(url)
-                # self.current_depth_unvisited_url_queue.task_done()
-            
-            # print("here")
+                
             self.current_depth_unvisited_url_queue.join()
-            print("joined")
-            # print(self.url_queue.is_unvisited_urls_empty())
             self.current_depth += 1
 
 
@@ -91,18 +133,22 @@ class WebCrawler:
         # https://www.codeproject.com/Questions/218217/How-to-decide-ideal-number-of-threads
         concurrency = concurrency if concurrency else (multiprocessing.cpu_count()*4)
         
-        for i in range(2):
-            self.current_depth_unvisited_url_queue.put_nowait(i)
+        # for i in range(2):
+        #     self.current_depth_unvisited_url_queue.put_nowait(i)
         
         # this cause join problem in queue (or other may be)
         # self.reset_all()
 
         threads = self.create_threads(concurrency)
 
-        sleep(0.5)
+        time.sleep(0.5)
         if(crawl_mode.lower() == 'bfs'):
             self.bfs(max_depth)
 
+        vis_url_dict = self.url_queue.get_visited_urls_set()
+
+        for url, detail in vis_url_dict.items():
+            print(url ,':', detail)
 
 
     def reset_all(self):
@@ -112,5 +158,6 @@ class WebCrawler:
 
 
 if __name__ == "__main__":
-    wc = WebCrawler()
+    seed = "https://codeforces.com/"
+    wc = WebCrawler(seed)
     wc.start('bfs', 0, 1)

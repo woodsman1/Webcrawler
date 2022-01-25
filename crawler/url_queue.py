@@ -7,16 +7,18 @@ class UrlQueue:
     self._unvisited_urls = Queue()
 
   def add_unvisited_url(self, url):
-    if not url or url in self._urls_till_now:
+    print(type(self._urls_till_now), url)
+    if not url or (url in self._urls_till_now):
       return
     self._unvisited_urls.put_nowait(url)
+    self._urls_till_now.add(url)
   
   def add_unvisited_urls(self, urls):
     if isinstance(urls, str):
       self.add_unvisited_url(urls)
     if isinstance(urls, (list,set)):
       for url in urls:
-        self.add_unvisited_url(urls)
+        self.add_unvisited_url(url)
   
   def add_visited_url(self, url, url_result):
     if not url and url in self._visited_urls:
@@ -39,10 +41,13 @@ class UrlQueue:
   def get_count_unvisited_url(self):
     return self._unvisited_urls.qsize()
 
-  def get_visited_url(self, url):
+  def get_visited_url_detail(self, url):
     req = self._visited_urls[url]
     self.remove_visted_url(self, url)
     return req
+
+  def get_visited_urls_set(self):
+    return self._visited_urls
   
   def get_count_visited_url(self):
     return len(self._visited_urls)
