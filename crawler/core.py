@@ -58,23 +58,22 @@ class WebCrawler:
         except requests.exceptions.InvalidSchema as ex:
             response_str = str(ex)
             status_code = 'InvalidSchema'
-            retry_times = 0
+            retry_time = 0
         except requests.exceptions.ChunkedEncodingError as ex:
             response_str = str(ex)
             status_code = 'ChunkedEncodingError'
-            retry_times = 0
+            retry_time = 0
         except requests.exceptions.InvalidURL as ex:
             response_str = str(ex)
             status_code = 'InvalidURL'
-            retry_times = 0
+            retry_time = 0
         except Exception as ex:
             response_str = str(ex)
             status_code = 'Unknown Exception'
-            retry_times = 0
         
         if retry_time > 0:
             if not status_code.isdigit() or int(status_code) > 400:
-                time.sleep((2-retry_times)*2)
+                time.sleep((2-retry_time)*2)
                 return self.get_hyperlinks(url, retry_time-1)
         else:
             self.bad_url_mapping[url] = response_str
@@ -145,6 +144,6 @@ class WebCrawler:
 
 
 if __name__ == "__main__":
-    seed = "https://codeforces.com/"
+    seed = ""
     wc = WebCrawler(seed)
     wc.start('bfs', 1)
