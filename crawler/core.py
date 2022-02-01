@@ -144,6 +144,6 @@ class WebCrawler:
 
 
 if __name__ == "__main__":
-    seed = ""
+    seed = "https://codeforces.com/"
     wc = WebCrawler(seed)
     wc.start('bfs', 1)
