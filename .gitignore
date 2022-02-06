@@ -9,6 +9,7 @@ media
 /crawler/result
 /model/malicious_phish.csv
 /model/features.txt
+/model/malicious_url.pkl
 
 
 # npm
