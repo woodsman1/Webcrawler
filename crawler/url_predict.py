@@ -147,7 +147,7 @@ class Url_predict:
     return
   
 if __name__ == "__main__":
-  url = "https://meet.google.com/"
+  url = "http://www.pashminaonline.com/pure-pashminas"
 
   obj = Url_predict(url)
   obj.prepare()
