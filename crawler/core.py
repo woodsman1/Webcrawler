@@ -4,9 +4,9 @@ import threading
 import time
 from bs4 import BeautifulSoup
 import requests
-from helper import save_data_to_csv
-from url_parser import parse_seed, parse_urls
-from url_queue import UrlQueue
+from .helper import save_data_to_csv
+from .url_parser import parse_seed, parse_urls
+from .url_queue import UrlQueue
 
 class WebCrawler:
 
