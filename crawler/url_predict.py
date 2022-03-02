@@ -136,7 +136,7 @@ class Url_predict:
       print("[ERROR]: Data must be prepared before predicting")
       return
 
-    print('[Predicting data].......')
+    print('[Predicting Data].......')
     
     ## define path of the pickle file
     model_path = os.path.join(os.path.dirname(__file__),'..', 'model', "malicious_url.pkl")

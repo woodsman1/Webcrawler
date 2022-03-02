@@ -55,16 +55,14 @@ def crawl(args):
     print(web_crawler.seeds)
     print(args.predict, type(args.predict))
     print(args.crawl_mode, args.max_depth, args.concurrency)
-
-  save_data_to_csv(None)
-
-  # try:
-  #   web_crawler.start(
-  #     crawl_mode=args.crawl_mode,
-  #     max_depth=args.max_depth,
-  #     concurrency=args.concurrency,
-  #   )
-  # except Exception as e:
-  #   print("[ERROR]: " + e)
-  # finally:
-  #   print("[Finised]")
+    
+    try:
+      web_crawler.start(
+        crawl_mode=args.crawl_mode,
+        max_depth=args.max_depth,
+        concurrency=args.concurrency,
+      )
+    except Exception as e:
+      print("[ERROR]: " + e)
+    finally:
+      print("[Finised]")

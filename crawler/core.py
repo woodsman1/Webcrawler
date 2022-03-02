@@ -110,9 +110,8 @@ class WebCrawler:
         while self.current_depth <= depth: 
             while not self.url_queue.is_unvisited_urls_empty():
                 url = self.url_queue.get_unvisited_url()
-                # print(url, "bfs")
                 self.current_depth_unvisited_url_queue.put_nowait(url)
-            time.sleep(1)
+            time.sleep(3)
                 
             self.current_depth_unvisited_url_queue.join()
             print(f'[INFO] : Depth {self.current_depth} completed')
@@ -134,7 +133,7 @@ class WebCrawler:
 
         vis_url_dict = self.url_queue.get_visited_urls_set()
 
-        print('[Completed Crawling]: success')
+        print('[Completed Crawling]: Completed Crawling')
         
         save_data_to_csv(vis_url_dict)
         return
