@@ -139,7 +139,7 @@ class Url_predict:
     print('[Predicting data].......')
     
     ## define path of the pickle file
-    model_path = os.path.join(os.path.dirname(__file__),'..', 'model', "Decisionmalicious_url.pkl")
+    model_path = os.path.join(os.path.dirname(__file__),'..', 'model', "malicious_url.pkl")
     
     _model = pickle.load(open(model_path, 'rb'))
     self.predicted_value = _model.predict([self.prepared_data])
