@@ -24,7 +24,6 @@ class WebCrawler:
         response_str = ''
 
         try:
-            # print(url, "get hyperlink")
             start_time = time.time()
             resp = requests.get(url)
             response_time = time.time() - start_time
@@ -111,7 +110,7 @@ class WebCrawler:
             while not self.url_queue.is_unvisited_urls_empty():
                 url = self.url_queue.get_unvisited_url()
                 self.current_depth_unvisited_url_queue.put_nowait(url)
-            time.sleep(3)
+            time.sleep(2)
                 
             self.current_depth_unvisited_url_queue.join()
             print(f'[INFO] : Depth {self.current_depth} completed')
@@ -145,6 +144,6 @@ class WebCrawler:
 
 
 if __name__ == "__main__":
-    seed = "https://codeforces.com/"
+    seed = "https://google.com/"
     wc = WebCrawler(seed)
     wc.start('bfs', 1)

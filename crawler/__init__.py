@@ -21,13 +21,14 @@ def main():
 
   parser.add_argument(
     '--max-depth',
-    default=2,
+    default=1,
     type = int,
     help= "Specify max crawl depth."
   )
 
   parser.add_argument(
-    "--concurrency", 
+    "--concurrency",
+    type = int,
     help='Specify concurrency number.',
   )
 
@@ -44,19 +45,16 @@ def main():
 
 
 def crawl(args):
-
-  web_crawler = WebCrawler(args.seeds)
-
   if args.predict != None:
-    obj = Url_predict(args.predict)
-    obj.prepare()
-    obj.predict_url()
-  else:
-    print(web_crawler.seeds)
-    print(args.predict, type(args.predict))
-    print(args.crawl_mode, args.max_depth, args.concurrency)
-    
     try:
+      obj = Url_predict(args.predict)
+      obj.prepare()
+      obj.predict_url()
+    except Exception as e:
+      print("[ERROR]: " + e)
+  else:
+    try:
+      web_crawler = WebCrawler(args.seeds)
       web_crawler.start(
         crawl_mode=args.crawl_mode,
         max_depth=args.max_depth,

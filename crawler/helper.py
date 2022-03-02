@@ -3,12 +3,12 @@ from datetime import datetime
 import os
 
 def save_data_to_csv(visited_urls):
-  file_name = "/result/" + datetime.now().strftime("%Y_%m_%d_%H%M%S") + '.csv'
+  file_name = "results/" + datetime.now().strftime("%Y_%m_%d_%H%M%S") + '.csv'
   file_path = os.path.join(os.getcwd(), file_name)
 
   print('[Preparing CSV] ......')
 
-  with open(file_name, 'w') as fptr:
+  with open(file_path, 'w') as fptr:
     fieldname = ['url', 'status_code', 'response_time', 'response_statement']
     
     csv_writer = csv.DictWriter(fptr, fieldnames=fieldname)
