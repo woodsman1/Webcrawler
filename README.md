@@ -15,6 +15,8 @@ A simple webcrawler, mainly targeting the link validation and predicting malicio
 
 ![](/results/predict.png)
 
+You can see the csv file in result directory
+
 
 ## Installation
 
