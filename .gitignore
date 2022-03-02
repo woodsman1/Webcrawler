@@ -7,7 +7,6 @@ media
 
 
 /crawler/result
-/model/malicious_phish.csv
 /model/features.txt
 /model/malicious_url.pkl
 /model/detection-malicious-url-using-ml-models.ipynb
