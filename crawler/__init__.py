@@ -1,4 +1,7 @@
 import argparse
+
+from crawler.helper import save_data_to_csv
+from crawler.url_predict import Url_predict
 from .core import WebCrawler
 
 def main():
@@ -44,9 +47,16 @@ def crawl(args):
 
   web_crawler = WebCrawler(args.seeds)
 
-  print(web_crawler.seeds)
-  print(args.predict, type(args.predict))
-  print(args.crawl_mode, args.max_depth, args.concurrency)
+  if args.predict != None:
+    obj = Url_predict(args.predict)
+    obj.prepare()
+    obj.predict_url()
+  else:
+    print(web_crawler.seeds)
+    print(args.predict, type(args.predict))
+    print(args.crawl_mode, args.max_depth, args.concurrency)
+
+  save_data_to_csv(None)
 
   # try:
   #   web_crawler.start(

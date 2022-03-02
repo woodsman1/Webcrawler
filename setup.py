@@ -10,6 +10,7 @@ setup(
   url = 'https://github.com/woodsman1/Webcrawler',
   # license='MIT',
   packages=find_packages(exclude=['tests']),
+  data_files=[('model/', ['model/Decisionmalicious_url.pkl'])],
   install_requires = [
     'lxml',
     'requests',

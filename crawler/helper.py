@@ -8,13 +8,16 @@ import os
 def save_data_to_csv(visited_urls):
   file_name = "crawler/result/" + datetime.now().strftime("%Y_%m_%d_%H%M%S") + '.csv'
 
-  with open(file_name, 'w') as fptr:
-    fieldname = ['url', 'status_code', 'response_time', 'response_statement']
+  model_path = os.path.join(os.path.dirname(__file__))
+  print(model_path)
+
+  # with open(file_name, 'w') as fptr:
+  #   fieldname = ['url', 'status_code', 'response_time', 'response_statement']
     
-    csv_writer = csv.DictWriter(fptr, fieldnames=fieldname)
+  #   csv_writer = csv.DictWriter(fptr, fieldnames=fieldname)
 
-    csv_writer.writeheader()
+  #   csv_writer.writeheader()
 
-    for url, detail in visited_urls.items():
-      detail['url'] = url
-      csv_writer.writerow(detail)
+  #   for url, detail in visited_urls.items():
+  #     detail['url'] = url
+  #     csv_writer.writerow(detail)

@@ -87,6 +87,9 @@ class Url_predict:
     return cnt
 
   def prepare(self):
+
+    print("[Preparing Data].......")
+
     self.is_ip = self.have_ip_address(self._url)
     self.prepared_data.append(self.is_ip)
 
@@ -126,21 +129,22 @@ class Url_predict:
     self.alpha_count = self.count_alpha(self._url)
     self.prepared_data.append(self.alpha_count)
 
-    # print("prepared")
     return
 
   def predict_url(self):
     if self.prepared_data is None:
-      print("ERROR: Data must be prepared before predicting")
+      print("[ERROR]: Data must be prepared before predicting")
       return
 
+    print('[Predicting data].......')
+    
     ## define path of the pickle file
     model_path = os.path.join(os.path.dirname(__file__),'..', 'model', "Decisionmalicious_url.pkl")
     
     _model = pickle.load(open(model_path, 'rb'))
     self.predicted_value = _model.predict([self.prepared_data])
 
-    print(self.categories[self.predicted_value[0]])
+    print('[Result]: ', self.categories[self.predicted_value[0]])
 
     return
   

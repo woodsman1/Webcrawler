@@ -115,6 +115,7 @@ class WebCrawler:
             time.sleep(1)
                 
             self.current_depth_unvisited_url_queue.join()
+            print(f'[INFO] : Depth {self.current_depth} completed')
             self.current_depth += 1
 
     def start(self, crawl_mode = "bfs", max_depth = 10, concurrency = None):
@@ -124,6 +125,8 @@ class WebCrawler:
         # this cause join problem in queue (or other may be)
         # self.reset_all()
 
+        print(f'[Starting]: MODE:{crawl_mode.upper()} MAX DEPTH:{max_depth} CONCURRENCY:{concurrency}')
+
         threads = self.create_threads(concurrency)
 
         if(crawl_mode.lower() == 'bfs'):
@@ -131,8 +134,7 @@ class WebCrawler:
 
         vis_url_dict = self.url_queue.get_visited_urls_set()
 
-        # for url, detail in vis_url_dict.items():
-        #     print(url ,':', detail)
+        print('[Completed Crawling]: success')
         
         save_data_to_csv(vis_url_dict)
         return
