@@ -90,7 +90,6 @@ class WebCrawler:
         while 1:
             try:
                 url = self.current_depth_unvisited_url_queue.get()
-                # print(url, "crawl")
                 self.get_hyperlinks(url)
             finally:
                 self.current_depth_unvisited_url_queue.task_done()
@@ -119,9 +118,6 @@ class WebCrawler:
     def start(self, crawl_mode = "bfs", max_depth = 10, concurrency = None):
         # https://www.codeproject.com/Questions/218217/How-to-decide-ideal-number-of-threads
         concurrency = concurrency if concurrency else (multiprocessing.cpu_count()*4)
-        
-        # this cause join problem in queue (or other may be)
-        # self.reset_all()
 
         print(f'[Starting]: MODE:{crawl_mode.upper()} MAX DEPTH:{max_depth} CONCURRENCY:{concurrency}')
 
@@ -141,9 +137,3 @@ class WebCrawler:
         self.current_depth = 0
         self.current_depth_unvisited_url_queue.queue.clear()
         self.url_queue.clear()
-
-
-if __name__ == "__main__":
-    seed = "https://google.com/"
-    wc = WebCrawler(seed)
-    wc.start('bfs', 1)

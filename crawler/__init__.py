@@ -1,6 +1,5 @@
 import argparse
 
-from crawler.helper import save_data_to_csv
 from crawler.url_predict import Url_predict
 from .core import WebCrawler
 

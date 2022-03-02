@@ -147,10 +147,3 @@ class Url_predict:
     print('[Result]: ', self.categories[self.predicted_value[0]])
 
     return
-  
-if __name__ == "__main__":
-  url = "http://www.pashminaonline.com/pure-pashminas"
-
-  obj = Url_predict(url)
-  obj.prepare()
-  obj.predict_url()
